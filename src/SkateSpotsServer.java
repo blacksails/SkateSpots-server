@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import org.simpleframework.http.Query;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
+import org.simpleframework.http.ResponseWrapper;
+import org.simpleframework.http.Status;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.http.core.ContainerServer;
 import org.simpleframework.transport.Server;
@@ -39,12 +41,14 @@ public class SkateSpotsServer implements Container{
 	
 	public static class Task implements Runnable {
 		
-		private final Response response;
+		private final ResponseWrapper response;
 		private final Request request;
 		
 		public Task(Request request, Response response) {
-			this.response = response;
+			this.response = new ResponseWrapper(response);
 			this.request = request;
+			response.setContentType("text/plain");
+			response.setValue("Server", "Skate Spots - Server 1.0");
 		}
 
 		@Override
@@ -64,10 +68,9 @@ public class SkateSpotsServer implements Container{
 						case "login": login(query);
 					}
 				} else {
-					// TODO send error response
+					// The server did not understand the request (Code 400)
+					response.setStatus(Status.BAD_REQUEST);
 				}
-				
-				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -86,12 +89,15 @@ public class SkateSpotsServer implements Container{
 				String checkPassword = "SELECT * FROM users WHERE email=" + email + " AND pass=" + password + ";";
 				ResultSet checkedPassword = st.executeQuery(checkPassword);
 				if (checkedPassword.next()){
-					// TODO respond "logged in"
+					// We are logged in (Code 200)
+					response.setStatus(Status.OK);
 				} else {
-					// TODO respond "wrong password"
+					// Wrong password returns code 420
+					response.setCode(420);
 				}
 			} else {
-				// TODO respond "email does not exist"
+				// Email does not exist returns code 421
+				response.setCode(421);
 			}
 		}
 
