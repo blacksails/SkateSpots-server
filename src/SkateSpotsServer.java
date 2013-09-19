@@ -80,11 +80,13 @@ public class SkateSpotsServer implements Container{
 		private void login(Query query) throws Exception {
 			String email = '"' + query.get("email") + '"';
 			String password = query.get("password");
-			String checkEmail = "SELECT * FROM users WHERE email=" + email + ";";
 			DatabaseConnection dbConnection = new DatabaseConnection();
 			java.sql.Connection con = dbConnection.getDatabaseConnection();
 			Statement st = con.createStatement();
+			
+			String checkEmail = "SELECT * FROM users WHERE email=" + email + ";";
 			ResultSet checkedEmail = st.executeQuery(checkEmail);
+			
 			if (checkedEmail.next()) {
 				String checkPassword = "SELECT * FROM users WHERE email=" + email + " AND pass=" + password + ";";
 				ResultSet checkedPassword = st.executeQuery(checkPassword);
@@ -99,6 +101,8 @@ public class SkateSpotsServer implements Container{
 				// Email does not exist returns code 421
 				response.setCode(421);
 			}
+			// Close database connection
+			con.close();
 		}
 
 		private void createUser(Query query) {
