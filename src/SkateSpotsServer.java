@@ -132,7 +132,7 @@ public class SkateSpotsServer implements Container{
 				response.setCode(421); // There is already an account with that email address
 				body.println("Email is already registered: 421");
 			} else {
-				String insertUser = "INSERT..."; // TODO finish sql statement of inserting new user
+				String insertUser = "INSERT INTO users VALUES ('"+email+"', '"+password+"', '"+displayname+"');";
 				st.execute(insertUser); 
 				response.setStatus(Status.OK);
 				body.println("OK: 200");
