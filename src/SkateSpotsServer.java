@@ -117,7 +117,7 @@ public class SkateSpotsServer implements Container{
 			con.close();
 		}
 
-		private void createUser(Query query) throws Exception{
+		private void createUser(Query query) throws Exception {
 			String email = '"'+query.get("email")+'"';
 			String password = '"'+query.get("password")+'"';
 			String displayname = '"'+query.get("displayname")+'"';
