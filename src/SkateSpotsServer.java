@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.sql.ResultSet;
@@ -43,34 +45,43 @@ public class SkateSpotsServer implements Container{
 		
 		private final ResponseWrapper response;
 		private final Request request;
+		private PrintStream body;
 		
 		public Task(Request request, Response response) {
 			this.response = new ResponseWrapper(response);
 			this.request = request;
-			response.setContentType("text/plain");
-			response.setValue("Server", "Skate Spots - Server 1.0");
+			this.response.setContentType("text/plain");
+			this.response.setValue("Server", "Skate Spots - Server 1.0");
 		}
 
 		@Override
 		public void run() {
 			try {
+				body = this.response.getPrintStream();
 				Query query = request.getQuery();
-				String accessKey = query.get("accessKey");
-				if (accessKey.equals("ourKey")) {
-					String type = query.get("type");
-					switch (type) {
-						case "changeLocation": changeLocation(query);
+				if (query.containsKey("accessKey")) {
+					String accessKey = query.get("accessKey");
+					if (accessKey.equals("ourKey")) {
+						String type = query.get("type");
+						switch (type) {
+							case "changeLocation": changeLocation(query);
 							break;
-						case "getLocations": getLocations();
+							case "getLocations": getLocations();
 							break;
-						case "createUser": createUser(query);
+							case "createUser": createUser(query);
 							break;
-						case "login": login(query);
+							case "login": login(query);
+						} 
+					} else {
+						response.setStatus(Status.BAD_REQUEST);
+						body.println("Bad Request: 400");
 					}
 				} else {
 					// The server did not understand the request (Code 400)
 					response.setStatus(Status.BAD_REQUEST);
+					body.println("Bad Request: 400");
 				}
+				body.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -89,8 +100,10 @@ public class SkateSpotsServer implements Container{
 			
 			if (checkedAccount.next()) {
 				response.setStatus(Status.OK);
+				body.println("OK: 200");
 			} else {
 				response.setCode(420); // The password or the email address is incorrect
+				body.println("Wrong password or email address: 420");
 			}
 			// Close database connection
 			con.close();
@@ -109,9 +122,11 @@ public class SkateSpotsServer implements Container{
 			
 			if (checkedAccount.next()) {
 				response.setCode(421); // There is already an account with that email address
+				body.println("Email is already registered: 421");
 			} else {
 				st.execute("INSERT..."); // TODO finish sql statement of inserting new user
 				response.setStatus(Status.OK);
+				body.println("OK: 200");
 			}
 			// Close database connection
 			con.close();
