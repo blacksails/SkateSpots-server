@@ -78,36 +78,43 @@ public class SkateSpotsServer implements Container{
 		}
 
 		private void login(Query query) throws Exception {
-			String email = '"' + query.get("email") + '"';
-			String password = query.get("password");
+			String email = '"'+query.get("email")+'"';
+			String password = '"'+query.get("password")+'"';
 			DatabaseConnection dbConnection = new DatabaseConnection();
 			java.sql.Connection con = dbConnection.getDatabaseConnection();
 			Statement st = con.createStatement();
 			
-			String checkEmail = "SELECT * FROM users WHERE email=" + email + ";";
-			ResultSet checkedEmail = st.executeQuery(checkEmail);
+			String checkAccount = "SELECT * FROM users WHERE email="+email+"AND pass="+password+";";
+			ResultSet checkedAccount = st.executeQuery(checkAccount);
 			
-			if (checkedEmail.next()) {
-				String checkPassword = "SELECT * FROM users WHERE email=" + email + " AND pass=" + password + ";";
-				ResultSet checkedPassword = st.executeQuery(checkPassword);
-				if (checkedPassword.next()){
-					// We are logged in (Code 200)
-					response.setStatus(Status.OK);
-				} else {
-					// Wrong password returns code 420
-					response.setCode(420);
-				}
+			if (checkedAccount.next()) {
+				response.setStatus(Status.OK);
 			} else {
-				// Email does not exist returns code 421
-				response.setCode(421);
+				response.setCode(420); // The password or the email address is incorrect
 			}
 			// Close database connection
 			con.close();
 		}
 
-		private void createUser(Query query) {
-			// TODO Auto-generated method stub
+		private void createUser(Query query) throws Exception{
+			String email = '"'+query.get("email")+'"';
+			String password = '"'+query.get("password")+'"';
+			String displayname = '"'+query.get("displayname")+'"';
+			DatabaseConnection dbConnection = new DatabaseConnection();
+			java.sql.Connection con = dbConnection.getDatabaseConnection();
+			Statement st = con.createStatement();
 			
+			String checkAccount = "SELECT * FROM users WHERE email="+email+";";
+			ResultSet checkedAccount = st.executeQuery(checkAccount);
+			
+			if (checkedAccount.next()) {
+				response.setCode(421); // There is already an account with that email address
+			} else {
+				st.execute("INSERT..."); // TODO finish sql statement of inserting new user
+				response.setStatus(Status.OK);
+			}
+			// Close database connection
+			con.close();
 		}
 
 		private void getLocations() {
