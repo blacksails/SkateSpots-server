@@ -58,7 +58,8 @@ public class SkateSpotsServer implements Container{
 		public void run() {
 			try {
 				body = this.response.getPrintStream();
-				
+				String content = request.getContent();
+				System.out.println(content);
 				body.close();
 			} catch (Exception e) {
 				e.printStackTrace();
