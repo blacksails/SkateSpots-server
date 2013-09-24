@@ -57,71 +57,12 @@ public class SkateSpotsServer implements Container{
 		@Override
 		public void run() {
 			try {
-				body = this.response.getPrintStream();
 				String content = request.getContent();
 				System.out.println(content);
-				body.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
 		}
-
-		private void login(Query query) throws Exception {
-			String email = '"'+query.get("email")+'"';
-			String password = '"'+query.get("password")+'"';
-			DatabaseConnection dbConnection = new DatabaseConnection();
-			java.sql.Connection con = dbConnection.getDatabaseConnection();
-			Statement st = con.createStatement();
-			
-			String checkAccount = "SELECT * FROM users WHERE email="+email+"AND pass="+password+";";
-			ResultSet checkedAccount = st.executeQuery(checkAccount);
-			
-			if (checkedAccount.next()) {
-				response.setStatus(Status.OK);
-				body.println("OK: 200");
-			} else {
-				response.setCode(420); // The password or the email address is incorrect
-				body.println("Wrong password or email address: 420");
-			}
-			// Close database connection
-			con.close();
-		}
-
-		private void createUser(Query query) throws Exception {
-			String email = '"'+query.get("email")+'"';
-			String password = '"'+query.get("password")+'"';
-			String displayname = '"'+query.get("displayname")+'"';
-			DatabaseConnection dbConnection = new DatabaseConnection();
-			java.sql.Connection con = dbConnection.getDatabaseConnection();
-			Statement st = con.createStatement();
-			
-			String checkAccount = "SELECT * FROM users WHERE email="+email+";";
-			ResultSet checkedAccount = st.executeQuery(checkAccount);
-			
-			if (checkedAccount.next()) {
-				response.setCode(421); // There is already an account with that email address
-				body.println("Email is already registered: 421");
-			} else {
-				String insertUser = "INSERT INTO users VALUES ('"+email+"', '"+password+"', '"+displayname+"');";
-				st.execute(insertUser); 
-				response.setStatus(Status.OK);
-				body.println("OK: 200");
-			}
-			// Close database connection
-			con.close();
-		}
-
-		private void getLocations() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		private void changeLocation(Query query) {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}
-	
 }
