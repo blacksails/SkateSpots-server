@@ -85,15 +85,19 @@ public class SkateSpotsServer implements Container {
 			try {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
+				System.out.println(email+" is trying to login");
 				if (email != null && password != null) {
 					con = new DatabaseConnection().getDatabaseConnection();
+					if (con == null) System.out.println("Error establishing the database connection");
 					st = con.createStatement();
 					String checkUser = "SELECT * FROM users WHERE email="+email+" AND pass="+password+";";
 					res = st.executeQuery(checkUser);
 					if (res.next()) {
+						System.out.println(email+" has been accepted");
 						// email and password matches
 						response.setStatus(Status.OK);
 					} else {
+						System.out.println(email+" has been rejected");
 						// wrong email or password
 						response.setStatus(Status.BAD_REQUEST);
 					}
