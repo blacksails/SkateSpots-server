@@ -85,7 +85,8 @@ public class SkateSpotsServer implements Container {
 			try {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
-				System.out.println(email+" is trying to login");
+				System.out.println(email+" is trying to login with the password:"+password);
+				
 				if (email != null && password != null) {
 					con = new DatabaseConnection().getDatabaseConnection();
 					if (con == null) System.out.println("Error establishing the database connection");
