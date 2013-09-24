@@ -3,7 +3,6 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -102,7 +101,7 @@ public class SkateSpotsServer implements Container {
 					// invalid request
 					response.setStatus(Status.BAD_REQUEST);
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				close();
@@ -132,7 +131,7 @@ public class SkateSpotsServer implements Container {
 					// invalid request
 					response.setStatus(Status.BAD_REQUEST);
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				close();
