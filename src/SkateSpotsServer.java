@@ -50,7 +50,7 @@ public class SkateSpotsServer implements Container{
 		public Task(Request request, Response response) {
 			this.response = new ResponseWrapper(response);
 			this.request = request;
-			this.response.setContentType("text/plain");
+			this.response.setContentType("application/json");
 			this.response.setValue("Server", "Skate Spots - Server 1.0");
 		}
 
