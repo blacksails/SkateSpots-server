@@ -58,37 +58,7 @@ public class SkateSpotsServer implements Container{
 		public void run() {
 			try {
 				body = this.response.getPrintStream();
-				Query query = request.getQuery();
-				if (query.containsKey("accessKey")) {
-					String accessKey = query.get("accessKey");
-					if (accessKey.equals("ourKey")) {
-						if (query.containsKey("type")) {
-							String type = query.get("type");
-							switch (type) {
-								case "changeLocation": changeLocation(query);
-									break;
-								case "getLocations": getLocations();
-									break;
-								case "createUser": createUser(query);
-									break;
-								case "login": login(query);
-								default: response.setStatus(Status.BAD_REQUEST);
-									body.println("Bad Request - Wrong Type: 400");
-							} 
-						} else {
-							response.setStatus(Status.BAD_REQUEST);
-							body.println("Bad Request - Missing Type: 400");
-						}
-						
-					} else {
-						response.setStatus(Status.BAD_REQUEST);
-						body.println("Bad Request - Wrong Access Key: 400");
-					}
-				} else {
-					// The server did not understand the request (Code 400)
-					response.setStatus(Status.BAD_REQUEST);
-					body.println("Bad Request - Missing Access Key: 400");
-				}
+				
 				body.close();
 			} catch (Exception e) {
 				e.printStackTrace();
