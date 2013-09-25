@@ -87,12 +87,12 @@ public class SkateSpotsServer implements Container {
 			try {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
-				System.out.println(email+" is trying to login with the password:"+password);
 				con = new DatabaseConnection().getDatabaseConnection();
 				if (con == null) System.out.println("Error establishing the database connection");
 				st = con.createStatement();
 				String checkUser = "SELECT * FROM users WHERE email="+email+" AND pass="+password+";";
 				res = st.executeQuery(checkUser);
+				System.out.println(email+" is trying to login");
 				if (res.next()) {
 					System.out.println(email+" has been accepted");
 					// email and password matches
@@ -118,15 +118,16 @@ public class SkateSpotsServer implements Container {
 				st = con.createStatement();
 				String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
 				res = st.executeQuery(checkIfExists);
-				System.out.println("Checked if user already exists");
+				System.out.println("Attempts to create user:"+email);
 				if (!res.next()) {
 					// User does not exist and is therefore created
 					String createUser = "INSERT INTO users VALUES ("+email+", "+password+", "+displayname+");";
 					st.execute(createUser);
-					System.out.println("Created user");
+					System.out.println("User does not exist: Created user");
 					response.setStatus(Status.OK);
 				} else {
 					// User with the given email already exists
+					System.out.println("User already exists: User not created");
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
@@ -145,6 +146,7 @@ public class SkateSpotsServer implements Container {
 				st = con.createStatement();
 				String updateLocation = "UPDATE locations SET location="+location+", time="+time+" WHERE email="+email+";";
 				st.execute(updateLocation);
+				System.out.println("Updated the location of "+email);
 				response.setStatus(Status.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
