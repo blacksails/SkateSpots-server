@@ -72,6 +72,8 @@ public class SkateSpotsServer implements Container {
 					break;
 					case 1: createUser(obj);
 					break;
+					case 2: setCurrentLocation(obj);
+					break;
 					default: response.setStatus(Status.BAD_REQUEST);
 					}
 				}
@@ -86,24 +88,18 @@ public class SkateSpotsServer implements Container {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
 				System.out.println(email+" is trying to login with the password:"+password);
-				
-				if (email != null && password != null) {
-					con = new DatabaseConnection().getDatabaseConnection();
-					if (con == null) System.out.println("Error establishing the database connection");
-					st = con.createStatement();
-					String checkUser = "SELECT * FROM users WHERE email="+email+" AND pass="+password+";";
-					res = st.executeQuery(checkUser);
-					if (res.next()) {
-						System.out.println(email+" has been accepted");
-						// email and password matches
-						response.setStatus(Status.OK);
-					} else {
-						System.out.println(email+" has been rejected");
-						// wrong email or password
-						response.setStatus(Status.BAD_REQUEST);
-					}
+				con = new DatabaseConnection().getDatabaseConnection();
+				if (con == null) System.out.println("Error establishing the database connection");
+				st = con.createStatement();
+				String checkUser = "SELECT * FROM users WHERE email="+email+" AND pass="+password+";";
+				res = st.executeQuery(checkUser);
+				if (res.next()) {
+					System.out.println(email+" has been accepted");
+					// email and password matches
+					response.setStatus(Status.OK);
 				} else {
-					// invalid request
+					System.out.println(email+" has been rejected");
+					// wrong email or password
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
@@ -118,22 +114,17 @@ public class SkateSpotsServer implements Container {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
 				String displayname = '"'+obj.get("displayname").getAsString()+'"';
-				if (email != null && password != null && displayname != null) {
-					con = new DatabaseConnection().getDatabaseConnection();
-					st = con.createStatement();
-					String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
-					res = st.executeQuery(checkIfExists);
-					if (!res.next()) {
-						// User does not exist and is therefore created
-						String createUser = "INSERT INTO users VALUES ("+email+", "+password+", "+displayname+");";
-						st.execute(createUser);
-						response.setStatus(Status.OK);
-					} else {
-						// User with the given email already exists
-						response.setStatus(Status.BAD_REQUEST);
-					}
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
+				res = st.executeQuery(checkIfExists);
+				if (!res.next()) {
+					// User does not exist and is therefore created
+					String createUser = "INSERT INTO users VALUES ("+email+", "+password+", "+displayname+");";
+					st.execute(createUser);
+					response.setStatus(Status.OK);
 				} else {
-					// invalid request
+					// User with the given email already exists
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
@@ -143,6 +134,24 @@ public class SkateSpotsServer implements Container {
 			}
 		}
 		
+		private void setCurrentLocation(JsonObject obj) {
+			try {
+				String email = '"'+obj.get("email").getAsString()+'"';
+				String location = '"'+obj.get("location").getAsString()+'"'; // TODO not sure if this is the way to do it
+				String time = '"'+obj.get("time").getAsString()+'"';
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				String updateLocation = "UPDATE locations SET location="+location+", time="+time+" WHERE email="+email+";";
+				st.execute(updateLocation);
+				response.setStatus(Status.OK);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				close();
+			}
+			
+		}
+
 		// Closes the remains of the database connection
 		private void close() {
 			try {
