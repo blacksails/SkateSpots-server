@@ -121,7 +121,7 @@ public class SkateSpotsServer implements Container {
 				System.out.println("Attempts to create user:"+email);
 				if (!res.next()) {
 					// User does not exist and is therefore created
-					String createUser = "INSERT INTO users VALUES ("+email+", "+password+", "+displayname+");";
+					String createUser = "INSERT INTO users(email,pass,displayname) VALUES ("+email+", "+password+", "+displayname+");";
 					st.execute(createUser);
 					System.out.println("User does not exist: Created user");
 					response.setStatus(Status.OK);
