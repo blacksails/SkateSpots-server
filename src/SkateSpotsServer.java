@@ -74,6 +74,8 @@ public class SkateSpotsServer implements Container {
 					break;
 					case 2: setCurrentLocation(obj);
 					break;
+					case 3: getCurrentLocations(obj);
+					break;
 					default: response.setStatus(Status.BAD_REQUEST);
 					}
 				}
@@ -162,6 +164,14 @@ public class SkateSpotsServer implements Container {
 				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 			} finally {
 				close();
+			}
+		}
+
+		private void getCurrentLocations(JsonObject obj) {
+			try {
+				// TODO implement this
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
