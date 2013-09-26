@@ -79,31 +79,34 @@ public class SkateSpotsServer implements Container {
 				}
 				body.close();
 			} catch (IOException e) {
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 				e.printStackTrace();
 			}
 		}
 
 		private void login(JsonObject obj) {
 			try {
+				// Creating required strings
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
-				con = new DatabaseConnection().getDatabaseConnection();
-				if (con == null) System.out.println("Error establishing the database connection");
-				st = con.createStatement();
 				String checkUser = "SELECT * FROM users WHERE email="+email+" AND pass="+password+";";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
 				res = st.executeQuery(checkUser);
 				System.out.println(email+" is trying to login");
 				if (res.next()) {
-					System.out.println(email+" has been accepted");
 					// email and password matches
+					System.out.println(email+" has been accepted");
 					response.setStatus(Status.OK);
 				} else {
-					System.out.println(email+" has been rejected");
 					// wrong email or password
+					System.out.println(email+" has been rejected");
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 			} finally {
 				close();
 			}
@@ -111,12 +114,14 @@ public class SkateSpotsServer implements Container {
 
 		private void createUser(JsonObject obj) {
 			try {
+				// Creating required strings
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
 				String displayname = '"'+obj.get("displayname").getAsString()+'"';
+				String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
+				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
-				String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
 				res = st.executeQuery(checkIfExists);
 				System.out.println("Attempts to create user:"+email);
 				if (!res.next()) {
@@ -132,6 +137,7 @@ public class SkateSpotsServer implements Container {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 			} finally {
 				close();
 			}
@@ -139,29 +145,38 @@ public class SkateSpotsServer implements Container {
 		
 		private void setCurrentLocation(JsonObject obj) {
 			try {
+				// Creating required strings
 				String email = '"'+obj.get("email").getAsString()+'"';
-				String location = '"'+obj.get("location").getAsString()+'"'; // TODO not sure if this is the way to do it
-				String time = '"'+obj.get("time").getAsString()+'"';
+				Double latitude = '"'+obj.get("latitude").getAsDouble()+'"';
+				Double longitude = '"'+obj.get("longitude").getAsDouble()+'"';
+				String updateLocation = "UPDATE users SET latitude="+latitude+", longitude="+longitude+" WHERE email="+email+";";
+				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
-				String updateLocation = "UPDATE locations SET location="+location+", time="+time+" WHERE email="+email+";";
 				st.execute(updateLocation);
 				System.out.println("Updated the location of "+email);
+				// We had success
 				response.setStatus(Status.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 			} finally {
 				close();
 			}
-			
 		}
 
 		// Closes the remains of the database connection
 		private void close() {
 			try {
-				res.close();
-				st.close();
-				con.close();
+				if (res != null) {
+					res.close();
+				}
+				if (st != null) {
+					st.close();
+				}
+				if (con != null) {
+					con.close();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
