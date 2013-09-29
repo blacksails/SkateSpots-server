@@ -169,9 +169,23 @@ public class SkateSpotsServer implements Container {
 
 		private void getCurrentLocations(JsonObject obj) {
 			try {
-				// TODO implement this
+				// Creating required strings
+				String email = obj.get("email").getAsString();
+				String subQuery = "SELECT email, displayname, latitude, longitude "+
+									"FROM users "+
+									"WHERE latitude IS NOT NULL AND longitude IS NOT NULL";
+				String getUserLocations = "SELECT email, displayname, latitude, longitude "+
+											"FROM ("+subQuery+") "+
+											"WHERE email<>'"+email+"' "+
+											"AND DATE_SUB(NOW(), INTERVAL 1 HOUR) < locationtime";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				res = st.executeQuery(getUserLocations);
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				close();
 			}
 		}
 
