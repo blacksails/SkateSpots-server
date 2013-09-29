@@ -177,7 +177,7 @@ public class SkateSpotsServer implements Container {
 									"FROM users "+
 									"WHERE latitude IS NOT NULL AND longitude IS NOT NULL";
 				String getUserLocations = "SELECT email, displayname, latitude, longitude "+
-											"FROM ("+subQuery+") "+
+											"FROM ("+subQuery+") withOutNull "+
 											"WHERE email<>'"+email+"' "+
 											"AND DATE_SUB(NOW(), INTERVAL 1 HOUR) < locationtime";
 				// Establish dbconnection and a statement, and execute the prepared sql
