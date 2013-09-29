@@ -173,7 +173,7 @@ public class SkateSpotsServer implements Container {
 			try {
 				// Creating required strings
 				String email = obj.get("email").getAsString();
-				String subQuery = "SELECT email, displayname, latitude, longitude "+
+				String subQuery = "SELECT email, displayname, latitude, longitude, locationtime "+
 									"FROM users "+
 									"WHERE latitude IS NOT NULL AND longitude IS NOT NULL";
 				String getUserLocations = "SELECT email, displayname, latitude, longitude "+
