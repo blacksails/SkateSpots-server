@@ -17,8 +17,10 @@ import org.simpleframework.transport.Server;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 public class SkateSpotsServer implements Container {
 
@@ -182,8 +184,24 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				res = st.executeQuery(getUserLocations);
+				JsonArray resLocations = new JsonArray();
+				while (res.next()) {
+					String resEmail = res.getString("email");
+					String resDisplayname = res.getString("displayname");
+					Double resLatitude = res.getDouble("latitude");
+					Double resLongitude = res.getDouble("longitude");
+					JsonObject resRow = new JsonObject();
+					resRow.add("email", new JsonPrimitive(resEmail));
+					resRow.add("displayname", new JsonPrimitive(resDisplayname));
+					resRow.add("latitude", new JsonPrimitive(resLatitude));
+					resRow.add("longitude", new JsonPrimitive(resLongitude));
+					resLocations.add(resRow);
+				}
+				response.setStatus(Status.OK);
+				body.println(resLocations.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
 			} finally {
 				close();
 			}
