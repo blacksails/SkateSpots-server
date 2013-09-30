@@ -197,6 +197,7 @@ public class SkateSpotsServer implements Container {
 					resRow.add("longitude", new JsonPrimitive(resLongitude));
 					resLocations.add(resRow);
 				}
+				System.out.println(email+" requested currenct location of other users.");
 				response.setStatus(Status.OK);
 				body.println(resLocations.toString());
 			} catch (Exception e) {
