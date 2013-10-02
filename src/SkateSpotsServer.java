@@ -2,8 +2,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -98,14 +100,14 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				res = st.executeQuery(checkUser);
-				System.out.println(email+" is trying to login");
+				System.out.println(new Timestamp(new Date().getTime())+": "+email+" is trying to login");
 				if (res.next()) {
 					// email and password matches
-					System.out.println(email+" has been accepted");
+					System.out.println(new Timestamp(new Date().getTime())+": "+email+" has been accepted");
 					response.setStatus(Status.OK);
 				} else {
 					// wrong email or password
-					System.out.println(email+" has been rejected");
+					System.out.println(new Timestamp(new Date().getTime())+": "+email+" has been rejected");
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
@@ -128,17 +130,17 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				res = st.executeQuery(checkIfExists);
-				System.out.println("Attempts to create user:"+email);
+				System.out.println(new Timestamp(new Date().getTime())+": "+"Attempts to create user:"+email);
 				if (!res.next()) {
 					// User does not exist and is therefore created
 					String createUser = "INSERT INTO users(email,pass,displayname,bluid) VALUES ("+email+
 											", "+password+", "+displayname+", "+bluid+");";
 					st.execute(createUser);
-					System.out.println("User does not exist: Created user");
+					System.out.println(new Timestamp(new Date().getTime())+": "+"User does not exist: Created user");
 					response.setStatus(Status.OK);
 				} else {
 					// User with the given email already exists
-					System.out.println("User already exists: User not created");
+					System.out.println(new Timestamp(new Date().getTime())+": "+"User already exists: User not created");
 					response.setStatus(Status.BAD_REQUEST);
 				}
 			} catch (Exception e) {
@@ -160,7 +162,7 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				st.execute(updateLocation);
-				System.out.println("Updated the location of "+email);
+				System.out.println(new Timestamp(new Date().getTime())+": "+"Updated the location of "+email);
 				// We had success
 				response.setStatus(Status.OK);
 			} catch (Exception e) {
@@ -199,7 +201,7 @@ public class SkateSpotsServer implements Container {
 					resRow.add("longitude", new JsonPrimitive(resLongitude));
 					resLocations.add(resRow);
 				}
-				System.out.println(email+" requested currenct location of other users.");
+				System.out.println(new Timestamp(new Date().getTime())+": "+email+" requested currenct location of other users.");
 				response.setStatus(Status.OK);
 				body.println(resLocations.toString());
 			} catch (Exception e) {
