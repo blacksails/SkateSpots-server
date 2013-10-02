@@ -122,6 +122,7 @@ public class SkateSpotsServer implements Container {
 				String email = '"'+obj.get("email").getAsString()+'"';
 				String password = '"'+obj.get("password").getAsString()+'"';
 				String displayname = '"'+obj.get("displayname").getAsString()+'"';
+				String bluID = '"'+obj.get("bluID").getAsString()+'"';
 				String checkIfExists = "SELECT * FROM users WHERE email="+email+";";
 				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
@@ -130,7 +131,8 @@ public class SkateSpotsServer implements Container {
 				System.out.println("Attempts to create user:"+email);
 				if (!res.next()) {
 					// User does not exist and is therefore created
-					String createUser = "INSERT INTO users(email,pass,displayname) VALUES ("+email+", "+password+", "+displayname+");";
+					String createUser = "INSERT INTO users(email,pass,displayname,bluid) VALUES ("+email+
+											", "+password+", "+displayname+", "+bluID+");";
 					st.execute(createUser);
 					System.out.println("User does not exist: Created user");
 					response.setStatus(Status.OK);
