@@ -232,12 +232,15 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				res = st.executeQuery(newSkateSpot);
+				System.out.println(new Timestamp(new Date().getTime())+": "+author+" created a new skatespot called "+name);
 				int lastInsertID = res.getInt(1);
 				if (wifi.size() > 0) {
 					Iterator<JsonElement> iterator = wifi.iterator();
 					while (iterator.hasNext()) {
-						String wifiToInsert = "INSERT INTO wifi VALUES("+lastInsertID+", '"+iterator.next().getAsString()+"');";
+						String ssid = iterator.next().getAsString();
+						String wifiToInsert = "INSERT INTO wifi VALUES("+lastInsertID+", '"+ssid+"');";
 						st.executeUpdate(wifiToInsert);
+						System.out.println(new Timestamp(new Date().getTime())+": wifi with ssid "+ssid+" attached to skatespot (id:"+lastInsertID+")");
 					}
 				}
 				
