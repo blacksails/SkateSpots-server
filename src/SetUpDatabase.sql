@@ -8,9 +8,7 @@ CREATE TABLE `users`(
 	`latitude` DOUBLE(14,10),
 	`longitude` DOUBLE(14,10),
 	`locationtime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`bluid` CHAR(17) NOT NULL
-	);
-	
+	`bluid` CHAR(17) NOT NULL);
 
 DROP TABLE IF EXISTS `skatespots`;
 CREATE TABLE `skatespots`(
