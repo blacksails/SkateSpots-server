@@ -2,10 +2,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -20,6 +21,7 @@ import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -79,6 +81,8 @@ public class SkateSpotsServer implements Container {
 					case 2: setCurrentLocation(obj);
 					break;
 					case 3: getCurrentLocations(obj);
+					break;
+					case 4: createSkateSpot(obj);
 					break;
 					default: response.setStatus(Status.BAD_REQUEST);
 					}
@@ -210,6 +214,40 @@ public class SkateSpotsServer implements Container {
 			} finally {
 				close();
 			}
+		}
+
+		private void createSkateSpot(JsonObject obj) {
+			try {
+				// Creating required strings
+				String author = obj.get("author").getAsString();
+				String name = obj.get("name").getAsString();
+				String description = obj.get("description").getAsString();
+				String spottype = obj.get("spottype").getAsString();
+				Double latitude = obj.get("latitude").getAsDouble();
+				Double longitude = obj.get("longitude").getAsDouble();
+				JsonArray wifi = obj.get("wifi").getAsJsonArray();
+				String newSkateSpot = "INSERT INTO skatespots(author,name,description,type,latitude,longitude) VALUES ('"+
+						author+"', '"+name+"', '"+description+"', '"+spottype+"', "+latitude+", "+longitude+"); SELECT LAST_INSERT_ID();";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				res = st.executeQuery(newSkateSpot);
+				int lastInsertID = res.getInt(1);
+				if (wifi.size() > 0) {
+					Iterator<JsonElement> iterator = wifi.iterator();
+					while (iterator.hasNext()) {
+						String wifiToInsert = "INSERT INTO wifi VALUES("+lastInsertID+", '"+iterator.next().getAsString()+"');";
+						st.executeUpdate(wifiToInsert);
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.setStatus(Status.INTERNAL_SERVER_ERROR);
+			} finally {
+				close();
+			}
+			
 		}
 
 		// Closes the remains of the database connection
