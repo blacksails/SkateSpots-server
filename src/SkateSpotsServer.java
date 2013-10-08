@@ -106,9 +106,12 @@ public class SkateSpotsServer implements Container {
 				res = st.executeQuery(checkUser);
 				System.out.println(new Timestamp(new Date().getTime())+": "+email+" is trying to login");
 				if (res.next()) {
+					JsonObject responseObj = new JsonObject();
+					responseObj.add("displayname", new JsonPrimitive(res.getString("displayname")));
 					// email and password matches
 					System.out.println(new Timestamp(new Date().getTime())+": "+email+" has been accepted");
 					response.setStatus(Status.OK);
+					body.println(responseObj.toString());
 				} else {
 					// wrong email or password
 					System.out.println(new Timestamp(new Date().getTime())+": "+email+" has been rejected");
