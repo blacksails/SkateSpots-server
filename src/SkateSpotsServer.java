@@ -85,6 +85,7 @@ public class SkateSpotsServer implements Container {
 					case 4: createSkateSpot(obj);
 					break;
 					default: response.setStatus(Status.BAD_REQUEST);
+					default: {response.setStatus(Status.BAD_REQUEST);System.out.println("BAD_REQUEST");}
 					}
 				}
 				body.close();
