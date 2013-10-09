@@ -163,8 +163,7 @@ public class SkateSpotsServer implements Container {
 				// Creating required strings
 				String email = '"'+obj.get("email").getAsString()+'"';
 				double latitude = obj.get("latitude").getAsDouble();
-				System.out.println("TEST: "+latitude);
-				Double longitude = '"'+obj.get("longitude").getAsDouble()+'"';
+				double longitude = obj.get("longitude").getAsDouble();
 				String updateLocation = "UPDATE users SET latitude="+latitude+", longitude="+longitude+" WHERE email="+email+";";
 				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
