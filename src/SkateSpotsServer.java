@@ -270,7 +270,34 @@ public class SkateSpotsServer implements Container {
 			try {
 				// Creating required strings
 				String allSkateSpots = "SELECT * FROM skatespots;";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				res = st.executeQuery(allSkateSpots);
+				JsonArray jsonArray = new JsonArray();
+				while (res.next()) {
+					JsonObject resRow = new JsonObject();
+					int id = res.getInt("id");
+					resRow.add("id", new JsonPrimitive(id));
+					resRow.add("name", new JsonPrimitive(res.getString("name")));
+					resRow.add("description", new JsonPrimitive(res.getString("description")));
+					resRow.add("spottype", new JsonPrimitive(res.getString("type")));
+					resRow.add("author", new JsonPrimitive(res.getString("author")));
+					resRow.add("latitude", new JsonPrimitive(res.getDouble("latitude")));
+					resRow.add("longitude", new JsonPrimitive(res.getDouble("longitude")));
+					JsonArray wifi = new JsonArray();
+					String getWifi = "SELECT ssid FROM wifi WHERE id="+id+";";
+					ResultSet retrievedWifi = st.executeQuery(getWifi);
+					while (retrievedWifi.next()) {
+						wifi.add(new JsonPrimitive(retrievedWifi.getString(1)));
+					}
+					resRow.add("wifi", wifi);
+				}
+				System.out.println(new Timestamp(new Date().getTime())+": user "+obj.get("email").getAsString()+" request current skatespots");
+				response.setStatus(Status.OK);
+				body.println(jsonArray.toString());
 			} catch (Exception e) {
+				response.setStatus(Status.BAD_REQUEST);
 				e.printStackTrace();
 			}
 		}
