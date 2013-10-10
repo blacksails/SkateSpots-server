@@ -27,3 +27,10 @@ CREATE TABLE `wifi`(
 	`ssid` CHAR(17),
 	CHECK(NOT NULL),
 	PRIMARY KEY(`seenat`,`ssid`));
+	
+DROP TABLE IF EXISTS `sreminders`;
+CREATE TABLE `sreminders`(
+	`email` VARCHAR(50) REFERENCES `users`(`email`),
+	`skatespot` INT REFERENCES `skatespots`(`id`),
+	CHECK(NOT NULL),
+	PRIMARY KEY(`email`,`skatespot`));
