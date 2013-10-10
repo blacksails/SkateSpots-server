@@ -352,6 +352,7 @@ public class SkateSpotsServer implements Container {
 					int id = res.getInt(1);
 					jsonArray.add(new JsonPrimitive(id));
 				}
+				System.out.println(new Timestamp(new Date().getTime())+": user "+email+" requested reminders");
 				response.setStatus(Status.OK);
 				body.println(jsonArray.toString());
 			} catch (Exception e) {
