@@ -84,6 +84,7 @@ public class SkateSpotsServer implements Container {
 					break;
 					case 4: createSkateSpot(obj);
 					break;
+					case 5: getSkateSpots(obj);
 					default: response.setStatus(Status.BAD_REQUEST);
 					System.out.println("BAD_REQUEST");
 					break;
@@ -262,6 +263,15 @@ public class SkateSpotsServer implements Container {
 				close();
 			}
 			
+		}
+
+		private void getSkateSpots(JsonObject obj) {
+			try {
+				// Creating required strings
+				String allSkateSpots = "SELECT * FROM skatespots;";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		// Closes the remains of the database connection
