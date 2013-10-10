@@ -291,6 +291,7 @@ public class SkateSpotsServer implements Container {
 					while (retrievedWifi.next()) {
 						wifi.add(new JsonPrimitive(retrievedWifi.getString(1)));
 					}
+					retrievedWifi.close();
 					resRow.add("wifi", wifi);
 				}
 				System.out.println(new Timestamp(new Date().getTime())+": user "+obj.get("email").getAsString()+" request current skatespots");
@@ -299,6 +300,8 @@ public class SkateSpotsServer implements Container {
 			} catch (Exception e) {
 				response.setStatus(Status.BAD_REQUEST);
 				e.printStackTrace();
+			} finally {
+				close();
 			}
 		}
 
