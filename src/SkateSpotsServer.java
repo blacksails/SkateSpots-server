@@ -90,6 +90,8 @@ public class SkateSpotsServer implements Container {
 					break;
 					case 7: getReminders(obj);
 					break;
+					case 8: removeSkateSpotReminder(obj);
+					break;
 					default: response.setStatus(Status.BAD_REQUEST);
 					System.out.println("BAD_REQUEST");
 					break;
@@ -355,6 +357,26 @@ public class SkateSpotsServer implements Container {
 				System.out.println(new Timestamp(new Date().getTime())+": user "+email+" requested reminders");
 				response.setStatus(Status.OK);
 				body.println(jsonArray.toString());
+			} catch (Exception e) {
+				response.setStatus(Status.BAD_REQUEST);
+				e.printStackTrace();
+			} finally {
+				close();
+			}
+			
+		}
+
+		private void removeSkateSpotReminder(JsonObject obj) {
+			try {
+				// Creating required strings
+				String email = obj.get("email").getAsString();
+				int id = obj.get("id").getAsInt();
+				String removeReminder = "DELETE FROM sreminders WHERE email='"+email+"' AND skatespot="+id+";";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				st.execute(removeReminder);
+				response.setStatus(Status.OK);
 			} catch (Exception e) {
 				response.setStatus(Status.BAD_REQUEST);
 				e.printStackTrace();
