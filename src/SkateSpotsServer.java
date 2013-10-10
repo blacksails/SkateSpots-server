@@ -273,6 +273,7 @@ public class SkateSpotsServer implements Container {
 				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
+				Statement innerSt = con.createStatement();
 				res = st.executeQuery(allSkateSpots);
 				JsonArray jsonArray = new JsonArray();
 				while (res.next()) {
@@ -287,7 +288,7 @@ public class SkateSpotsServer implements Container {
 					resRow.add("longitude", new JsonPrimitive(res.getDouble("longitude")));
 					JsonArray wifi = new JsonArray();
 					String getWifi = "SELECT ssid FROM wifi WHERE seenat="+id+";";
-					ResultSet retrievedWifi = st.executeQuery(getWifi);
+					ResultSet retrievedWifi = innerSt.executeQuery(getWifi);
 					while (retrievedWifi.next()) {
 						wifi.add(new JsonPrimitive(retrievedWifi.getString(1)));
 					}
