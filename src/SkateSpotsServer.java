@@ -242,6 +242,9 @@ public class SkateSpotsServer implements Container {
 				System.out.println(new Timestamp(new Date().getTime())+": "+author+" created a new skatespot called "+name);
 				res.next();
 				int lastInsertID = res.getInt(1);
+				if (wifi.size() == 0){
+					System.out.println("NO WIFI!!!");
+				}
 				if (wifi.size() > 0) {
 					Iterator<JsonElement> iterator = wifi.iterator();
 					while (iterator.hasNext()) {
