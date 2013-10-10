@@ -322,6 +322,7 @@ public class SkateSpotsServer implements Container {
 				res = st.executeQuery(checkReminder);
 				if (!res.next()){
 					st.execute(createReminder);
+					System.out.println(new Timestamp(new Date().getTime())+": user "+email+" created new reminder on the id("+id+")");
 					response.setStatus(Status.OK);
 				} else {
 					response.setStatus(Status.BAD_REQUEST);
