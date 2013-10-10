@@ -232,11 +232,13 @@ public class SkateSpotsServer implements Container {
 				Double longitude = obj.get("longitude").getAsDouble();
 				JsonArray wifi = obj.get("wifi").getAsJsonArray();
 				String newSkateSpot = "INSERT INTO skatespots(author,name,description,type,latitude,longitude) VALUES ('"+
-						author+"', '"+name+"', '"+description+"', '"+spottype+"', "+latitude+", "+longitude+"); SELECT LAST_INSERT_ID();";
+						author+"', '"+name+"', '"+description+"', '"+spottype+"', "+latitude+", "+longitude+");";
+				String getLastInsertId = "SELECT LAST_INSERT_ID();";
 				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
-				res = st.executeQuery(newSkateSpot);
+				st.execute(newSkateSpot);
+				res = st.executeQuery(getLastInsertId);
 				System.out.println(new Timestamp(new Date().getTime())+": "+author+" created a new skatespot called "+name);
 				int lastInsertID = res.getInt(1);
 				if (wifi.size() > 0) {
