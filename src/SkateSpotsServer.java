@@ -376,6 +376,7 @@ public class SkateSpotsServer implements Container {
 				con = new DatabaseConnection().getDatabaseConnection();
 				st = con.createStatement();
 				st.execute(removeReminder);
+				System.out.println(new Timestamp(new Date().getTime())+": user "+email+" REMOVED reminder with the id("+id+")");
 				response.setStatus(Status.OK);
 			} catch (Exception e) {
 				response.setStatus(Status.BAD_REQUEST);
