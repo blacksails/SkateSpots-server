@@ -318,7 +318,7 @@ public class SkateSpotsServer implements Container {
 				// Creating required strings
 				String email = obj.get("email").getAsString();
 				int id = obj.get("id").getAsInt();
-				String checkReminder = "SELECT * FROM sreminders WHERE skatespot="+id+";";
+				String checkReminder = "SELECT * FROM sreminders WHERE email='"+email+"' AND skatespot="+id+";";
 				String createReminder = "INSERT INTO sreminders VALUES('"+email+"', "+id+");";
 				// Establish dbconnection and a statement, and execute the prepared sql
 				con = new DatabaseConnection().getDatabaseConnection();
