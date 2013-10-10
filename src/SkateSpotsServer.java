@@ -86,6 +86,8 @@ public class SkateSpotsServer implements Container {
 					break;
 					case 5: getSkateSpots(obj);
 					break;
+					case 6: newSkateSpotReminder(obj);
+					break;
 					default: response.setStatus(Status.BAD_REQUEST);
 					System.out.println("BAD_REQUEST");
 					break;
@@ -305,6 +307,32 @@ public class SkateSpotsServer implements Container {
 			} finally {
 				close();
 			}
+		}
+
+		private void newSkateSpotReminder(JsonObject obj) {
+			try {
+				// Creating required strings
+				String email = obj.get("email").getAsString();
+				int id = obj.get("id").getAsInt();
+				String checkReminder = "SELECT * FROM sreminders WHERE skatespot="+id+";";
+				String createReminder = "INSERT INTO sreminders VALUES('"+email+"', "+id+");";
+				// Establish dbconnection and a statement, and execute the prepared sql
+				con = new DatabaseConnection().getDatabaseConnection();
+				st = con.createStatement();
+				res = st.executeQuery(checkReminder);
+				if (!res.next()){
+					st.execute(createReminder);
+					response.setStatus(Status.OK);
+				} else {
+					response.setStatus(Status.BAD_REQUEST);
+				}
+			} catch (Exception e) {
+				response.setStatus(Status.BAD_REQUEST);
+				e.printStackTrace();
+			} finally {
+				close();
+			}
+			
 		}
 
 		// Closes the remains of the database connection
