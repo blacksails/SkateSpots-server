@@ -294,6 +294,7 @@ public class SkateSpotsServer implements Container {
 					}
 					retrievedWifi.close();
 					resRow.add("wifi", wifi);
+					jsonArray.add(resRow);
 				}
 				System.out.println(new Timestamp(new Date().getTime())+": user "+obj.get("email").getAsString()+" request current skatespots");
 				response.setStatus(Status.OK);
